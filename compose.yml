@@ -1,6 +1,6 @@
 services:
   app:
-    image: python:3.12-slim-bullseye
+    build: .
     volumes:
       - .:/app
     ports:

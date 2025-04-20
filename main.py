@@ -1,9 +1,6 @@
-from flask import Flask, redirect, request, session
-import requests
+from app import create_app
 
-app = Flask(__name__)
-app.secret_key = 'your_secret_key'
-
+app = create_app()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000, debug=True)
