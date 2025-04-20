@@ -6,6 +6,8 @@ class LoginService:
 
     def get_url_redirect(self, strategy: str) -> str:
         auth_strategy: AuthStrategy = self.auth_strategies.get(strategy)
+        if auth_strategy is None:
+            raise ValueError(f"Strategy {strategy} not found")
         url_redirect = auth_strategy.get_url_redirect()
         if url_redirect is None:
             raise ValueError("No url provided for redirection")

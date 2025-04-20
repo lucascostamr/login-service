@@ -19,6 +19,11 @@ def test_should_return_redirect_url_on_success():
 
     assert response == "url_redirect"
 
+def test_should_throw_error_if_strategy_not_found():
+    sut = make_sut()
+    with raises(ValueError):
+        sut.get_url_redirect("wrong_strategy")
+
 def test_should_throw_error_if_no_url_redirect_provided():
     fake_strategy = FakeAuthStrategy()
     fake_strategy.get_url_redirect = MagicMock(return_value=None)
