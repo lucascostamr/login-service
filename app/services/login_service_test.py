@@ -1,12 +1,16 @@
-from pytest import raises
 from unittest.mock import MagicMock
-from strategies.auth_strategy_interface import AuthStrategy
+
+import pytest
 from services.login_service import LoginService
+from strategies.auth_strategy_interface import AuthStrategy
 
 
 class FakeAuthStrategy(AuthStrategy):
     def get_url_redirect(self) -> str:
         return "url_redirect"
+
+    async def authenticate(self) -> dict:
+        return { "data": "fake_data"}
 
 def make_sut(strategy_override: AuthStrategy = None) -> LoginService:
     strategy = strategy_override or FakeAuthStrategy()
@@ -21,7 +25,7 @@ def test_should_return_redirect_url_on_success():
 
 def test_should_throw_error_if_strategy_not_found():
     sut = make_sut()
-    with raises(ValueError):
+    with pytest.raises(ValueError):
         sut.get_url_redirect("wrong_strategy")
 
 def test_should_throw_error_if_no_url_redirect_provided():
@@ -29,5 +33,11 @@ def test_should_throw_error_if_no_url_redirect_provided():
     fake_strategy.get_url_redirect = MagicMock(return_value=None)
     sut = make_sut(fake_strategy)
 
-    with raises(ValueError):
+    with pytest.raises(ValueError):
         sut.get_url_redirect("fake_strategy")
+
+@pytest.mark.asyncio
+async def test_should_return_data_on_success():
+    sut = make_sut()
+    response = await sut.authenticate("fake_strategy")
+    assert response == { "data": "fake_data"}

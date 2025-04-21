@@ -12,3 +12,8 @@ class LoginService:
         if url_redirect is None:
             raise ValueError("No url provided for redirection")
         return url_redirect
+
+    async def authenticate(self, strategy: str, **kwargs) -> dict:
+        auth_strategy: AuthStrategy = self.auth_strategies.get(strategy)
+        response = await auth_strategy.authenticate(**kwargs)
+        return response
