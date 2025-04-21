@@ -15,5 +15,9 @@ class LoginService:
 
     async def authenticate(self, strategy: str, **kwargs) -> dict:
         auth_strategy: AuthStrategy = self.auth_strategies.get(strategy)
+        if auth_strategy is None:
+            raise ValueError(f"Strategy {strategy} not found")
         response = await auth_strategy.authenticate(**kwargs)
+        if response is None:
+            raise ValueError("No data provided")
         return response
