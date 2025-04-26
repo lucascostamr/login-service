@@ -1,3 +1,3 @@
 class Hasher:
-    def verify(self, value: str, hashed_value: str):
-        return True
+    def verify(self, value: str, hashed_value: str) -> bool:
+        pass
