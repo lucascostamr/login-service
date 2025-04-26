@@ -27,3 +27,14 @@ async def test_should_throw_on_user_not_found():
 
     with pytest.raises(Exception, match="User not found"):
         await sut.authenticate("fake_username", "fake_password")
+
+
+@pytest.mark.asyncio
+async def test_should_call_get_user_data_with_correct_params():
+    user_repository = UserRepository()
+    user_repository.get_user_data = AsyncMock(return_value={"user_data": "fake_data"})
+    sut = UserPasswordStrategy(user_repository)
+
+    await sut.authenticate("fake_username", "fake_password")
+
+    user_repository.get_user_data.assert_awaited_once_with("fake_username")
