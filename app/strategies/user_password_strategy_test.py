@@ -1,13 +1,17 @@
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from data.user.user_data_provider import UserDataProvider
 from domain.user import User
 from repository.user_repository import UserRepository
 from strategies.user_password_strategy import UserPasswordStrategy
+from infra.hashers.hasher import Hasher
 
 fake_user = User("fake_username", "fake_password")
 
+@pytest.fixture
+def hasher():
+    return Hasher()
 
 @pytest.fixture
 def user_repository():
@@ -15,8 +19,8 @@ def user_repository():
 
 
 @pytest.fixture
-def sut(user_repository: UserRepository):
-    return UserPasswordStrategy(user_repository)
+def sut(user_repository: UserRepository, hasher: Hasher):
+    return UserPasswordStrategy(user_repository, hasher)
 
 
 @pytest.mark.asyncio
@@ -54,3 +58,11 @@ async def test_should_call_get_user_by_username_with_correct_params(
     await sut.authenticate("fake_username", "fake_password")
 
     user_repository.get_user_by_username.assert_awaited_once_with("fake_username")
+
+@pytest.mark.asyncio
+async def test_should_throw_on_invalid_password(sut: UserPasswordStrategy, hasher: Hasher, user_repository: UserRepository):
+    user_repository.get_user_by_username = AsyncMock(return_value=fake_user)
+    hasher.verify = MagicMock(return_value=False)
+
+    with pytest.raises(ValueError, match="Invalid credentials"):
+        await sut.authenticate("fake_username", "wrong_password")
