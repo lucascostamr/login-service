@@ -1,9 +1,9 @@
 from unittest.mock import AsyncMock
 
 import pytest
-
 from repository.user_repository import UserRepository
 from strategies.user_password_strategy import UserPasswordStrategy
+
 
 @pytest.mark.asyncio
 async def test_should_return_user_data_on_success():
@@ -13,7 +13,11 @@ async def test_should_return_user_data_on_success():
 
     response = await sut.authenticate("fake_username", "fake_password")
 
-    assert response == {"user_data": "fake_data"}
+    if response != {"user_data": "fake_data"}:
+        raise AssertionError(
+            f"Expected {{'user_data': 'fake_data'}}, but got {response}"
+        )
+
 
 @pytest.mark.asyncio
 async def test_should_throw_on_user_not_found():

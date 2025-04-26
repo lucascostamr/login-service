@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from services.login_service import LoginService
@@ -23,7 +23,8 @@ def test_should_return_redirect_url_on_success():
     sut = make_sut()
     response = sut.get_url_redirect("fake_strategy")
 
-    assert response == "url_redirect"
+    if response != "url_redirect":
+        raise AssertionError(f"Expected 'url_redirect', but got {response}")
 
 
 def test_should_throw_error_if_strategy_not_found():
@@ -45,7 +46,8 @@ def test_should_throw_error_if_no_url_redirect_provided():
 async def test_should_return_data_on_success():
     sut = make_sut()
     response = await sut.authenticate("fake_strategy")
-    assert response == {"data": "fake_data"}
+    if response != {"data": "fake_data"}:
+        raise AssertionError(f"Expected {{'data': 'fake_data'}}, but got {response}")
 
 
 @pytest.mark.asyncio
