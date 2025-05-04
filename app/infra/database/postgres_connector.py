@@ -3,6 +3,7 @@ from os import getenv
 from psycopg import AsyncConnection
 from psycopg_pool import AsyncConnectionPool
 
+
 class PostgresConnector:
     pool: AsyncConnection | None = None
 
@@ -20,7 +21,7 @@ class PostgresConnector:
                 min_size=1,
                 max_size=10,
             )
-    
+
     @staticmethod
     async def get_connection() -> AsyncConnection:
         if PostgresConnector.pool is None:
