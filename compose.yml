@@ -16,3 +16,4 @@ services:
       - POSTGRES_PASSWORD=1234
     ports:
       - 5432:5432
+ 
